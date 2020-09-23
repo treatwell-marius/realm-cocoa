@@ -774,18 +774,6 @@ template<>
 realm::UUID RLMAccessorContext::unbox(id v, CreatePolicy, ObjKey) {
     REALM_UNREACHABLE();
 }
-template<>
-realm::Mixed RLMAccessorContext::unbox(id v, CreatePolicy, ObjKey) {
-    REALM_UNREACHABLE();
-}
-template<>
-realm::object_store::Set RLMAccessorContext::unbox(id v, CreatePolicy, ObjKey) {
-    REALM_UNREACHABLE();
-}
-template<>
-realm::object_store::Dictionary RLMAccessorContext::unbox(id v, CreatePolicy, ObjKey) {
-    REALM_UNREACHABLE();
-}
 
 template<typename Fn>
 static auto to_optional(__unsafe_unretained id const value, Fn&& fn) {
