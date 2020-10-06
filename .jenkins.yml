@@ -3,18 +3,18 @@
 # https://wiki.jenkins-ci.org/display/JENKINS/Yaml+Axis+Plugin
 # This is a generated file produced by scripts/pr-ci-matrix.rb.
 
-xcode_version:
+xcode_version: 
  - 11.3
+ - 11.4.1
  - 11.7
  - 12.0
  - 12.1
- - 12.2
-target:
+target: 
  - swiftpm
  - swiftpm-address
  - swiftpm-thread
  - swiftpm-ios
-configuration:
+configuration: 
  - Debug
  - Release
 
@@ -24,6 +24,14 @@ exclude:
     target: swiftpm
     configuration: Debug
 
+  - xcode_version: 11.4.1
+    target: swiftpm
+    configuration: Debug
+
+  - xcode_version: 11.4.1
+    target: swiftpm
+    configuration: Release
+
   - xcode_version: 11.7
     target: swiftpm
     configuration: Debug
@@ -41,14 +49,6 @@ exclude:
     configuration: Release
 
   - xcode_version: 12.1
-    target: swiftpm
-    configuration: Debug
-
-  - xcode_version: 12.1
-    target: swiftpm
-    configuration: Release
-
-  - xcode_version: 12.2
     target: swiftpm
     configuration: Debug
 
@@ -60,6 +60,14 @@ exclude:
     target: swiftpm-address
     configuration: Release
 
+  - xcode_version: 11.4.1
+    target: swiftpm-address
+    configuration: Debug
+
+  - xcode_version: 11.4.1
+    target: swiftpm-address
+    configuration: Release
+
   - xcode_version: 11.7
     target: swiftpm-address
     configuration: Debug
@@ -77,14 +85,6 @@ exclude:
     configuration: Release
 
   - xcode_version: 12.1
-    target: swiftpm-address
-    configuration: Debug
-
-  - xcode_version: 12.1
-    target: swiftpm-address
-    configuration: Release
-
-  - xcode_version: 12.2
     target: swiftpm-address
     configuration: Debug
 
@@ -96,6 +96,14 @@ exclude:
     target: swiftpm-thread
     configuration: Release
 
+  - xcode_version: 11.4.1
+    target: swiftpm-thread
+    configuration: Debug
+
+  - xcode_version: 11.4.1
+    target: swiftpm-thread
+    configuration: Release
+
   - xcode_version: 11.7
     target: swiftpm-thread
     configuration: Debug
@@ -113,14 +121,6 @@ exclude:
     configuration: Release
 
   - xcode_version: 12.1
-    target: swiftpm-thread
-    configuration: Debug
-
-  - xcode_version: 12.1
-    target: swiftpm-thread
-    configuration: Release
-
-  - xcode_version: 12.2
     target: swiftpm-thread
     configuration: Debug
 
@@ -132,6 +132,14 @@ exclude:
     target: swiftpm-ios
     configuration: Release
 
+  - xcode_version: 11.4.1
+    target: swiftpm-ios
+    configuration: Debug
+
+  - xcode_version: 11.4.1
+    target: swiftpm-ios
+    configuration: Release
+
   - xcode_version: 11.7
     target: swiftpm-ios
     configuration: Debug
@@ -149,13 +157,5 @@ exclude:
     configuration: Release
 
   - xcode_version: 12.1
-    target: swiftpm-ios
-    configuration: Debug
-
-  - xcode_version: 12.1
-    target: swiftpm-ios
-    configuration: Release
-
-  - xcode_version: 12.2
     target: swiftpm-ios
     configuration: Debug
