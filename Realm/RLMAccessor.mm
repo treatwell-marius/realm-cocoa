@@ -791,7 +791,7 @@ realm::ObjectId RLMAccessorContext::unbox(id v, CreatePolicy, ObjKey) {
 }
 template<>
 realm::UUID RLMAccessorContext::unbox(id v, CreatePolicy, ObjKey) {
-    REALM_UNREACHABLE();
+    return static_cast<NSUUID *>(v).uuidValue;
 }
 
 template<typename Fn>
