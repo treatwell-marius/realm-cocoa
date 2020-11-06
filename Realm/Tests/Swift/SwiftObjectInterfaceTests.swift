@@ -73,6 +73,7 @@ class SwiftRLMObjectInterfaceTests: RLMTestCase {
         obj.objectCol = SwiftRLMBoolObject()
         obj.objectCol.boolCol = true
         obj.arrayCol.add(obj.objectCol)
+        obj.uuidCol = UUID(uuidString: "00000000-0000-0000-0000-000000000000")
         try! realm.commitWriteTransaction()
 
         let data = "abcd".data(using: String.Encoding.utf8)
@@ -86,6 +87,7 @@ class SwiftRLMObjectInterfaceTests: RLMTestCase {
         XCTAssertEqual(firstObj.binaryCol!, data!)
         XCTAssertEqual(firstObj.dateCol, Date(timeIntervalSince1970: 123), "should be epoch + 123")
         XCTAssertEqual(firstObj.objectCol.boolCol, true, "should be true")
+        XCTAssertEqual(firstObj.uuidCol?.uuidString, "00000000-0000-0000-0000-000000000000")
         XCTAssertEqual(obj.arrayCol.count, UInt(1), "array count should be 1")
         XCTAssertEqual(obj.arrayCol.firstObject()!.boolCol, true, "should be true")
     }
@@ -108,6 +110,7 @@ class SwiftRLMObjectInterfaceTests: RLMTestCase {
         XCTAssertEqual(firstObj.dateCol, Date(timeIntervalSince1970: 1), "should be epoch + 1")
         XCTAssertEqual(firstObj.objectCol.boolCol, false, "should be false")
         XCTAssertEqual(firstObj.arrayCol.count, UInt(0), "array count should be zero")
+        XCTAssertEqual(firstObj.uuidCol!.uuidString, "00000000-0000-0000-0000-000000000000")
     }
 
     func testMergedDefaultValuesSwiftRLMObject() {
@@ -191,6 +194,7 @@ class SwiftRLMObjectInterfaceTests: RLMTestCase {
         XCTAssertNil(firstObj.optNSStringCol)
         XCTAssertNil(firstObj.optBinaryCol)
         XCTAssertNil(firstObj.optDateCol)
+        XCTAssertNil(firstObj.uuidCol)
 
         try! realm.transaction {
             firstObj.optObjectCol = SwiftRLMBoolObject()
@@ -200,12 +204,14 @@ class SwiftRLMObjectInterfaceTests: RLMTestCase {
             firstObj.optNSStringCol = "Hi!"
             firstObj.optBinaryCol = Data(bytes: "hi", count: 2)
             firstObj.optDateCol = Date(timeIntervalSinceReferenceDate: 10)
+            firstObj.uuidCol = UUID(uuidString: "00000000-0000-0000-0000-000000000000")
         }
         XCTAssertTrue(firstObj.optObjectCol!.boolCol)
         XCTAssertEqual(firstObj.optStringCol!, "Hi!")
         XCTAssertEqual(firstObj.optNSStringCol!, "Hi!")
         XCTAssertEqual(firstObj.optBinaryCol!, Data(bytes: "hi", count: 2))
-        XCTAssertEqual(firstObj.optDateCol!,  Date(timeIntervalSinceReferenceDate: 10))
+        XCTAssertEqual(firstObj.optDateCol!, Date(timeIntervalSinceReferenceDate: 10))
+        XCTAssertEqual(firstObj.uuidCol!.uuidString, "00000000-0000-0000-0000-000000000000")
 
         try! realm.transaction {
             firstObj.optObjectCol = nil
@@ -213,12 +219,14 @@ class SwiftRLMObjectInterfaceTests: RLMTestCase {
             firstObj.optNSStringCol = nil
             firstObj.optBinaryCol = nil
             firstObj.optDateCol = nil
+            firstObj.uuidCol = nil
         }
         XCTAssertNil(firstObj.optObjectCol)
         XCTAssertNil(firstObj.optStringCol)
         XCTAssertNil(firstObj.optNSStringCol)
         XCTAssertNil(firstObj.optBinaryCol)
         XCTAssertNil(firstObj.optDateCol)
+        XCTAssertNil(firstObj.uuidCol)
     }
 
     func testSwiftRLMClassNameIsDemangled() {
