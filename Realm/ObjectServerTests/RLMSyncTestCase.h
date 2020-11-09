@@ -69,17 +69,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (RLMCredentials *)basicCredentialsWithName:(NSString *)name register:(BOOL)shouldRegister;
 
++ (NSURL *)onDiskPathForSyncedRealm:(RLMRealm *)realm;
+
+/// Synchronously open a synced Realm and wait until the binding process has completed or failed.
+- (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue user:(RLMUser *)user;
+
+/// Synchronously open a synced Realm and wait until the binding process has completed or failed.
+- (RLMRealm *)openRealmWithConfiguration:(RLMRealmConfiguration *)configuration;
+
 /// Synchronously open a synced Realm via asyncOpen and return the Realm.
 - (RLMRealm *)asyncOpenRealmWithConfiguration:(RLMRealmConfiguration *)configuration;
 
 /// Synchronously open a synced Realm via asyncOpen and return the expected error.
 - (NSError *)asyncOpenErrorWithConfiguration:(RLMRealmConfiguration *)configuration;
 
-/// Synchronously open a synced Realm and wait for downloads.
+/// Synchronously open a synced Realm. Also run a block right after the Realm is created.
 - (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue
-                                    user:(RLMUser *)user;
+                                    user:(RLMUser *)user
+                        immediatelyBlock:(nullable void(^)(void))block;
 
-/// Synchronously open a synced Realm with encryption key and stop policy and wait for downloads.
+/// Synchronously open a synced Realm with encryption key and stop policy.
+/// Also run a block right after the Realm is created.
 - (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue
                                     user:(RLMUser *)user
                            encryptionKey:(nullable NSData *)encryptionKey

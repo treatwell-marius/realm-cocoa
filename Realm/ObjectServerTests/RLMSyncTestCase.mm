@@ -235,6 +235,10 @@ static NSURL *syncDirectoryForChildProcess() {
 }
 
 - (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue user:(RLMUser *)user {
+    return [self openRealmForPartitionValue:partitionValue user:user immediatelyBlock:nil];
+}
+
+- (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue user:(RLMUser *)user immediatelyBlock:(void(^)(void))block {
     return [self openRealmForPartitionValue:partitionValue
                                        user:user
                               encryptionKey:nil
