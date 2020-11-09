@@ -210,7 +210,7 @@ static NSURL *syncDirectoryForChildProcess() {
 
 - (void)waitForDownloadsForUser:(RLMUser *)user
                          realms:(NSArray<RLMRealm *> *)realms
-                      partitionValues:(NSArray<NSString *> *)partitionValues
+                partitionValues:(NSArray<NSString *> *)partitionValues
                  expectedCounts:(NSArray<NSNumber *> *)counts {
     NSAssert(realms.count == counts.count && realms.count == partitionValues.count,
              @"Test logic error: all array arguments must be the same size.");
@@ -221,11 +221,11 @@ static NSURL *syncDirectoryForChildProcess() {
     }
 }
 
-- (RLMRealm *)openRealmForPartitionValue:(nullable NSString *)partitionValue user:(RLMUser *)user {
+- (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue user:(RLMUser *)user {
     return [self openRealmForPartitionValue:partitionValue user:user immediatelyBlock:nil];
 }
 
-- (RLMRealm *)openRealmForPartitionValue:(nullable NSString *)partitionValue user:(RLMUser *)user immediatelyBlock:(void(^)(void))block {
+- (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue user:(RLMUser *)user immediatelyBlock:(void(^)(void))block {
     return [self openRealmForPartitionValue:partitionValue
                                        user:user
                               encryptionKey:nil
@@ -233,7 +233,7 @@ static NSURL *syncDirectoryForChildProcess() {
                            immediatelyBlock:block];
 }
 
-- (RLMRealm *)openRealmForPartitionValue:(nullable NSString *)partitionValue
+- (RLMRealm *)openRealmForPartitionValue:(nullable id<RLMBSON>)partitionValue
                                     user:(RLMUser *)user
                            encryptionKey:(nullable NSData *)encryptionKey
                               stopPolicy:(RLMSyncStopPolicy)stopPolicy
