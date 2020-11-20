@@ -1477,10 +1477,10 @@ class SwiftMongoClientTests: SwiftSyncTestCase {
         let document: Document = ["name": "fido", "breed": "cane corso"]
 
         let insertManyEx = expectation(description: "Insert many documents")
-        collection.insertMany([document]) { result in
+        collection.insertMany([document, document]) { result in
             switch result {
             case .success(let objectIds):
-                XCTAssertEqual(objectIds.count, 1)
+                XCTAssertEqual(objectIds.count, 2)
             case .failure:
                 XCTFail("Should insert")
             }
@@ -1501,37 +1501,33 @@ class SwiftMongoClientTests: SwiftSyncTestCase {
         }
         wait(for: [findOneDeleteEx1], timeout: 4.0)
 
-        // FIXME: It seems there is a possible server bug that does not handle
-        // `projection` in `FindOneAndModifyOptions` correctly. The returned error is:
-        // "expected pre-image to match projection matcher"
-        // https://jira.mongodb.org/browse/REALMC-6878
-        /*
         let options1 = FindOneAndModifyOptions(["name": 1], ["_id": 1], false, false)
         let findOneDeleteEx2 = expectation(description: "Find one document and delete")
-        collection.findOneAndDelete(filter: document, options: options1) { (document, error) in
-            // Document does not exist, but should not return an error because of that
-            XCTAssertNil(document)
-            XCTAssertNil(error)
-            findOneDeleteEx2.fulfill()
+        collection.findOneAndDelete(filter: document, options: options1) { result in
+            switch result {
+            case .success(let document):
+                XCTAssertNotNil(document)
+                XCTAssertEqual(document!["name"]??.stringValue, "fido")
+                findOneDeleteEx2.fulfill()
+            case .failure:
+                XCTFail("Should find")
+            }
         }
         wait(for: [findOneDeleteEx2], timeout: 4.0)
-        */
 
-        // FIXME: It seems there is a possible server bug that does not handle
-        // `projection` in `FindOneAndModifyOptions` correctly. The returned error is:
-        // "expected pre-image to match projection matcher"
-        // https://jira.mongodb.org/browse/REALMC-6878
-        /*
         let options2 = FindOneAndModifyOptions(["name": 1], ["_id": 1])
         let findOneDeleteEx3 = expectation(description: "Find one document and delete")
-        collection.findOneAndDelete(filter: document, options: options2) { (document, error) in
-            XCTAssertNotNil(document)
-            XCTAssertEqual(document!["name"] as! String, "fido")
-            XCTAssertNil(error)
-            findOneDeleteEx3.fulfill()
+        collection.findOneAndDelete(filter: document, options: options2) { result in
+            switch result {
+            case .success(let document):
+                // Document does not exist, but should not return an error because of that
+                XCTAssertNil(document)
+                findOneDeleteEx3.fulfill()
+            case .failure:
+                XCTFail("Should find")
+            }
         }
         wait(for: [findOneDeleteEx3], timeout: 4.0)
-        */
 
         let findEx = expectation(description: "Find documents")
         collection.find(filter: [:]) { result in
@@ -3020,7 +3016,7 @@ class CombineObjectServerTests: SwiftSyncTestCase {
         let document: Document = ["name": "fido", "breed": "cane corso"]
 
         let insEx1 = expectation(description: "Insert document")
-        collection.insertMany([document])
+        collection.insertMany([document, document])
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in insEx1.fulfill() })
             .store(in: &cancellable)
         wait(for: [insEx1], timeout: 4.0)
@@ -3042,59 +3038,31 @@ class CombineObjectServerTests: SwiftSyncTestCase {
         let findOneDeleteEx2 = expectation(description: "Find one document and delete")
         collection.findOneAndDelete(filter: document, options: options1)
             .sink(receiveCompletion: { result in
-                if case .failure(let error) = result,
-                    error.localizedDescription == "expected pre-image to match projection matcher" {
-                    // FIXME: It seems there is a possible server bug that does not handle
-                    // `projection` in `FindOneAndModifyOptions` correctly. The returned error is:
-                    // "expected pre-image to match projection matcher"
-                    // https://jira.mongodb.org/browse/REALMC-6878
-                    findOneDeleteEx2.fulfill()
-                } else {
-                    XCTFail("Please review test cases for findOneAndDelete.")
+                if case .failure(let error) = result {
+                    XCTFail("Should try to find instead of \(error)")
                 }
-            }, receiveValue: { _ in
-                XCTFail("Please review test cases for findOneAndDelete.")
+            }, receiveValue: { document in
+                guard let document = document else {
+                    XCTFail("Should delete")
+                    return
+                }
+                XCTAssertEqual(document["name"]??.stringValue, "fido")
+                findOneDeleteEx2.fulfill()
             })
-//            .sink(receiveCompletion: { result in
-//                if case .failure(let error) = result {
-//                    XCTFail("Should try to find instead of \(error)")
-//                }
-//            }, receiveValue: { deleteResult in
-//                XCTAssertNil(deleteResult)
-//                findOneDeleteEx2.fulfill()
-//            })
-        .store(in: &cancellable)
+            .store(in: &cancellable)
         wait(for: [findOneDeleteEx2], timeout: 4.0)
 
         let options2 = FindOneAndModifyOptions(["name": 1], ["_id": 1])
         let findOneDeleteEx3 = expectation(description: "Find one document and delete")
         collection.findOneAndDelete(filter: document, options: options2)
             .sink(receiveCompletion: { result in
-                if case .failure(let error) = result,
-                    error.localizedDescription == "expected pre-image to match projection matcher" {
-                    // FIXME: It seems there is a possible server bug that does not handle
-                    // `projection` in `FindOneAndModifyOptions` correctly. The returned error is:
-                    // "expected pre-image to match projection matcher"
-                    // https://jira.mongodb.org/browse/REALMC-6878
-                    findOneDeleteEx3.fulfill()
-                } else {
-                    XCTFail("Please review test cases for findOneAndDelete.")
+                if case .failure(let error) = result {
+                    XCTFail("Should try to find instead of \(error)")
                 }
-            }, receiveValue: { _ in
-                XCTFail("Please review test cases for findOneAndDelete.")
+            }, receiveValue: { deleteResult in
+                XCTAssertNil(deleteResult)
+                findOneDeleteEx3.fulfill()
             })
-//            .sink(receiveCompletion: { result in
-//                if case .failure(let error) = result {
-//                    XCTFail("Should try to find instead of \(error)")
-//                }
-//            }, receiveValue: { deleteResult in
-//                guard let deleteResult = deleteResult else {
-//                    XCTFail("Should delete")
-//                    return
-//                }
-//                XCTAssertEqual(deleteResult["name"] as! String, "fido")
-//                findOneDeleteEx3.fulfill()
-//            })
             .store(in: &cancellable)
         wait(for: [findOneDeleteEx3], timeout: 4.0)
 
